@@ -1,0 +1,67 @@
+/**
+ * ****************************************************************************
+ * (c) copyright 2023 Sony Semiconductor Israel, Ltd. All rights reserved.
+ *
+ *
+ * This software, in source or object form (the "Software"), is the
+ * property of Sony Semiconductor Israel Ltd. (the "Company") and/or its
+ * licensors, which have all right, title and interest therein, You
+ * may use the Software only in  accordance with the terms of written
+ * license agreement between you and the Company (the "License").
+ * Except as expressly stated in the License, the Company grants no
+ * licenses by implication, estoppel, or otherwise. If you are not
+ * aware of or do not agree to the License terms, you may not use,
+ * copy or modify the Software. You may use the source code of the
+ * Software only for your internal purposes and may not distribute the
+ * source code of the Software, any part thereof, or any derivative work
+ * thereof, to any third party, except pursuant to the Company's prior
+ * written consent.
+ * The Software is the confidential information of the Company.
+ * ****************************************************************************
+ */
+// Protocol buffer representing the shape of tensors.
+
+syntax = "proto3";
+option cc_enable_arenas = true;
+option java_outer_classname = "TensorShapeProtos";
+option java_multiple_files = true;
+option java_package = "graphdef";
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/tensor_shape_go_proto";
+
+package uni_model_proto;
+
+// Dimensions of a tensor.
+message TensorShapeProto {
+  // One dimension of the tensor.
+  message Dim {
+    // Size of the tensor in that dimension.
+    // This value must be >= -1, but values of -1 are reserved for "unknown"
+    // shapes (values of -1 mean "unknown" dimension).  Certain wrappers
+    // that work with TensorShapeProto may fail at runtime when deserializing
+    // a TensorShapeProto containing a dim value of -1.
+    int64 size = 1;
+
+    // Optional name of the tensor dimension.
+    string name = 2;
+  };
+
+  // Dimensions of the tensor, such as {"input", 30}, {"output", 40}
+  // for a 30 x 40 2D tensor.  If an entry has size -1, this
+  // corresponds to a dimension of unknown size. The names are
+  // optional.
+  //
+  // The order of entries in "dim" matters: It indicates the layout of the
+  // values in the tensor in-memory representation.
+  //
+  // The first entry in "dim" is the outermost dimension used to layout the
+  // values, the last entry is the innermost dimension.  This matches the
+  // in-memory layout of RowMajor Eigen tensors.
+  //
+  // If "dim.size()" > 0, "unknown_rank" must be false.
+  repeated Dim dim = 2;
+
+  // If true, the number of dimensions in the shape is unknown.
+  //
+  // If true, "dim.size()" must be 0.
+  bool unknown_rank = 3;
+};

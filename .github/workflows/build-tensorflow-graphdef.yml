@@ -1,0 +1,43 @@
+name: Build Tensorflow-Graphdef
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_jar:
+    name: Build JAR
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: add artifactory credentials 🏭
+        run: |
+          echo >> gradle.properties
+          echo artifactory_username=${{ secrets.JFROG_USERNAME }} >> gradle.properties
+          echo artifactory_password=${{ secrets.JFROG_PASSWORD }} >> gradle.properties
+          cat gradle.properties
+      - name: Build and Publish JAR
+        run: |
+          ./gradlew clean
+          ./gradlew build -x test
+          ./gradlew publish
+     
+
+  build_wheel:
+    name: Build Wheel
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Build Wheel
+        run: |
+          cd python
+          pip install wheel
+          python setup.py bdist_wheel
+      - name: Push to artifactory 🔧
+        shell: bash
+        run: |
+          pip install twine
+          echo url ${{ secrets.JFROG_REPO_URL }}
+          twine upload python/dist/*.whl --repository-url ${{ secrets.JFROG_REPO_URL }} \
+                -u ${{ secrets.JFROG_USERNAME }} -p ${{ secrets.JFROG_PASSWORD }}

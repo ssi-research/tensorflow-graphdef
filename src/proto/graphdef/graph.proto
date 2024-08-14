@@ -1,0 +1,77 @@
+/**
+ * ****************************************************************************
+ * (c) copyright 2023 Sony Semiconductor Israel, Ltd. All rights reserved.
+ *
+ *
+ * This software, in source or object form (the "Software"), is the
+ * property of Sony Semiconductor Israel Ltd. (the "Company") and/or its
+ * licensors, which have all right, title and interest therein, You
+ * may use the Software only in  accordance with the terms of written
+ * license agreement between you and the Company (the "License").
+ * Except as expressly stated in the License, the Company grants no
+ * licenses by implication, estoppel, or otherwise. If you are not
+ * aware of or do not agree to the License terms, you may not use,
+ * copy or modify the Software. You may use the source code of the
+ * Software only for your internal purposes and may not distribute the
+ * source code of the Software, any part thereof, or any derivative work
+ * thereof, to any third party, except pursuant to the Company's prior
+ * written consent.
+ * The Software is the confidential information of the Company.
+ * ****************************************************************************
+ */
+syntax = "proto3";
+
+package uni_model_proto;
+
+import "graphdef/function.proto";
+import "graphdef/node_def.proto";
+import "graphdef/versions.proto";
+
+option cc_enable_arenas = true;
+option java_outer_classname = "GraphProtos";
+option java_multiple_files = true;
+option java_package = "graphdef";
+option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/graph_go_proto";
+
+// Represents the graph of operations
+message GraphDef {
+  repeated NodeDef node = 1;
+
+  // Compatibility versions of the graph.  See core/public/version.h for version
+  // history.  The GraphDef version is distinct from the TensorFlow version, and
+  // each release of TensorFlow will support a range of GraphDef versions.
+  VersionDef versions = 4;
+
+  // Deprecated single version field; use versions above instead.  Since all
+  // GraphDef changes before "versions" was introduced were forward
+  // compatible, this field is entirely ignored.
+  int32 version = 3 [deprecated = true];
+
+  // "library" provides user-defined functions.
+  //
+  // Naming:
+  //   * library.function.name are in a flat namespace.
+  //     NOTE: We may need to change it to be hierarchical to support
+  //     different orgs. E.g.,
+  //     { "/google/nn", { ... }},
+  //     { "/google/vision", { ... }}
+  //     { "/org_foo/module_bar", { ... }}
+  //     map<string, FunctionDefLib> named_lib;
+  //   * If node[i].op is the name of one function in "library",
+  //     node[i] is deemed as a function call. Otherwise, node[i].op
+  //     must be a primitive operation supported by the runtime.
+  //
+  //
+  // Function call semantics:
+  //
+  //   * The callee may start execution as soon as some of its inputs
+  //     are ready. The caller may want to use Tuple() mechanism to
+  //     ensure all inputs are ready in the same time.
+  //
+  //   * The consumer of return values may start executing as soon as
+  //     the return values the consumer depends on are ready.  The
+  //     consumer may want to use Tuple() mechanism to ensure the
+  //     consumer does not start until all return values of the callee
+  //     function are ready.
+  FunctionDefLibrary library = 2;
+}
