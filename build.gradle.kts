@@ -29,7 +29,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
 }
 
-group = "tensorflow-graphdef"
+group = "conv"
 
 var artifactory_publishing_url = artifactory_publish_url
 
