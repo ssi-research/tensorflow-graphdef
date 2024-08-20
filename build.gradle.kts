@@ -16,7 +16,6 @@ val protobufVersion = "3.25.3"
 val artifactory_publish_url: String by properties
 val artifactory_username: String by properties
 val artifactory_password: String by properties
-val projectVersion = "${protobufVersion}-2.13"
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.0")
@@ -37,18 +36,17 @@ repositories {
     mavenCentral()
 }
 
+
+sourceSets {
+    val main by getting {
+        kotlin.srcDirs("src-gen")
+    }
+}
+
 tasks.jar {
-    archiveBaseName.set("tensorflow-graphdef-${protobufVersion}")
-    archiveVersion.set("2.13")
-    from("src-gen/main/kotlin") {
-        into("kotlin")
-    }
-    from("src-gen/main/java") {
-        into("java")
-    }
-    from("src/proto") {
-        into("proto")
-    }
+    archiveBaseName.set("tensorflow-graphdef")
+    archiveVersion.set(protobufVersion)
+    from(sourceSets.main.get().output)
     from("src-gen/main/resources") {
         into("resources")
     }
@@ -59,7 +57,7 @@ publishing {
         create<MavenPublication>("maven_publish") {
             from(components["java"])
             artifactId = "tensorflow-graphdef"
-            version = projectVersion
+            version = protobufVersion
         }
     }
 
