@@ -1,11 +1,9 @@
-import com.google.protobuf.gradle.*
 import java.net.URI
 import java.io.*
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm") version "1.9.23"
-    id("com.google.protobuf") version "0.8.18"
     kotlin("plugin.serialization") version "1.9.23"
     `maven-publish`
     // Apply the application plugin to add support for building a CLI application in Java.

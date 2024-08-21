@@ -8,4 +8,7 @@ setup(
         '': ['LICENSE.txt, NOTICE.txt'],
     },
     include_package_data=True,
+    install_requires=[
+        'protobuf==4.25.3'
+    ]
 )
