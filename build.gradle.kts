@@ -34,11 +34,12 @@ repositories {
     mavenCentral()
 }
 
-
-sourceSets {
-    val main by getting {
-        kotlin.srcDirs("src-gen")
+sourceSets.main {
+    java {
+        srcDir("src-gen/main/java")
+        srcDir("src-gen/main/kotlin")
     }
+
 }
 
 tasks.jar {
@@ -54,7 +55,7 @@ publishing {
     publications {
         create<MavenPublication>("maven_publish") {
             from(components["java"])
-            artifactId = "tensorflow-graphdef"
+            artifactId = "tensorflow"
             version = protobufVersion
         }
     }
