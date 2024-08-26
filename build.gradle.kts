@@ -55,7 +55,7 @@ publishing {
     publications {
         create<MavenPublication>("maven_publish") {
             from(components["java"])
-            artifactId = "tensorflow"
+            artifactId = "tensorflow-graphdef"
             version = protobufVersion
         }
     }
